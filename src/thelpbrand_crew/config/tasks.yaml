@@ -1,0 +1,64 @@
+# src/thelpbrand_crew/config/tasks.yaml
+research_lps_task:
+  description: >
+    Conduct thorough research on the most importat Leadership Principles that are part of the culture of important companies, or that they were mentioned by important leaders. It's crucial to get the quote for each Leadership Principle.
+  expected_output: >
+    A bullet point list of Leadership Principles as quotes, indicating per each Leadership Principle the company behind it or the Leader behind it.
+  # human_input: True # parameter to put human in the loop during this task.
+  agent: researcher_lps
+
+
+research_trends_task:
+  description: >
+    Conduct thorough research on the most importat trends for fashion design of drawings to put on t-shirt.
+  expected_output: >
+    A bullet point list of trends about drawing designs, to put them in future t-shirt collections. Provide at least 10 bullet points. Some examples of those trends would be: "back to the future" drawings, "cactus", "avocado", "star wars", etc. Avoid the explanation per each item, please provide only a bullet list of drawing design trends.
+  # human_input: True # parameter to put human in the loop during this task.
+  agent: researcher_trends
+
+
+creative_director_task:
+  description: >
+    Create novel drawing concepts for a new t-shirt drawing design collections. Specifically, you must combine 1 Leadership Principle and 1 fashion trend in each new concept. When you choose 1 Leadership Principle and 1 fashion design trend, you don't do it at random, but rather you use your experience as a Creative and your intuition to select both with which you can create a work that has the essence of both.
+    Some drawing concept examples created putting together 1 Leadership Principle and 1 fashion researcher_trends:
+    - "Invent and Simplify" (Leadership Principle from Amazon culture), and a fixie bicycle (as trending design seen in t-shirts), then a new grawing concept would be a silhouette of a fixie bicycle drawn with a single continuous line, with the text below "Invent and Simplify".
+    - "Think Big" (Leadership Principle from Amazon culture), and a piece of sushi (as trending design seen in t-shirts), then a new drawing concept would be an image of a giant sushi bigger than the table and surrounded by normal size people.
+  expected_output: >
+    A bullet point list of novel drawing concept designs for t-shirts, each drawing concept design is a mix of 1 Leadership Principle and 1 fashion design trend. Indicate in each bullet point:
+    1) the new drawing concept design, 
+    2) the Leadership Principle used, 
+    3) the fashion trend used and 
+    4) the explanation.
+  human_input: True # parameter to put human in the loop during this task.
+  agent: creative_director
+  context:
+    - research_lps_task
+    - research_trends_task
+  output_file: output/drawing_concepts.md
+
+
+potential_user_task:
+  description: >
+    For a given drawing design for t-shirt, to confirm if you would purchase the given t-shirt or not, and why.
+  expected_output: >
+    Use the following format in your output_file:
+    - The given t-shirt design drawings.
+    - Would you purchase the given design? (yes or not)
+    - Why (justify your previous answer).
+  # human_input: True # parameter to put human in the loop during this task.
+  agent: potential_user
+  context:
+    - creative_director_task
+
+
+prompt_designer_task:
+  description: >
+    For a given drawing design concept for t-shirt, that previously a potential user confirmed that they would purchase that drawing concept design, to create a prompt for multimodal LLM, in order to get a generative AI image to put it in the t-shirt and become a best seller.
+  expected_output: >
+    A very descriptive prompt to be used as input in a multimodal LLM, because we want to use those AI-generated images to put them in a t-shirt collection.
+  human_input: True # parameter to put human in the loop during this task.
+  agent: prompt_designer
+  context:
+    - creative_director_task
+    - potential_user_task
+  output_file: output/prompts.md
